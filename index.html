@@ -197,6 +197,60 @@
             font-size: 18px;
             margin: 10px 0;
         }
+        /* 📱 スマホ（画面幅が600px以下）のときだけ適用するサイズ調整 */
+@media (max-width: 600px) {
+    body {
+        padding: 10px; /* 画面全体の余白を狭くして広く使う */
+    }
+    
+    /* タイトル文字を少し小さく */
+    h1 {
+        font-size: 22px !important; 
+    }
+    .bunny-header span {
+        font-size: 30px !important; /* うさぎやいちごの絵文字サイズ */
+    }
+    
+    /* 各ボックスの見出しや文字をキュッと小さく */
+    h2 {
+        font-size: 15px !important;
+    }
+    label {
+        font-size: 12px !important;
+    }
+    input, select, textarea {
+        font-size: 14px !important; /* 入力文字の大きさを最適化 */
+        padding: 8px !important;    /* 入力欄の中の余白を狭くしてコンパクトに */
+    }
+    
+    /* 大きすぎていた保存ボタンを押しやすい適切なサイズに */
+    button {
+        padding: 10px 20px !important;
+        font-size: 14px !important;
+        border-radius: 20px !important;
+    }
+    
+    /* 履歴カードの中の文字や grid の間隔を調整 */
+    .log-item {
+        padding: 12px !important;
+        border-radius: 4px 14px 14px 4px !important;
+    }
+    .log-grid {
+        grid-template-columns: 1fr !important; /* スマホではラベルと中身を縦並びにして見やすく */
+        gap: 2px !important;
+        font-size: 13px !important;
+    }
+    .log-label {
+        margin-top: 5px;
+    }
+    
+    /* 辞典の出力エリアの文字サイズ */
+    .dic-output {
+        font-size: 13px !important;
+        padding: 10px !important;
+    }
+}
+        
     </style>
 </head>
 <body>
