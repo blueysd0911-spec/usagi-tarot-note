@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>タロットうさぎの占い屋さん 🐰🍓</title>
+    <style>
+        :root {
+            --primary-color: #ffb7c5; /* さくらピンク */
+            --accent-color: #ff8fa3;  /* いちごピンク */
+            --bg-color: #fff5f6;      /* ほんのりピンクのミルク色 */
+            --card-bg: #ffffff;
+            --text-color: #5d4f52;    /* 優しいココアブラウン */
+            --bunny-ears: #ffd0d6;    /* 耳のなかみのピンク */
+        }
+        body {
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* ウサギといちごのヘッダー */
+        .bunny-header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+            padding-top: 20px;
+        }
+        h1 {
+            color: var(--accent-color);
+            font-size: 32px;
+            margin: 10px 0 5px 0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+        }
+        .subtitle {
+            font-size: 14px;
+            color: #a38a8e;
+            margin: 0;
+        }
+        
+        h2 {
+            color: var(--accent-color);
+            border-bottom: 2px dashed var(--primary-color);
+            padding-bottom: 8px;
+            margin-top: 0;
+            font-size: 18px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 900px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+        .card-box {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: 24px;
+            box-shadow: 0 8px 20px rgba(255, 183, 197, 0.25);
+            margin-bottom: 25px;
+            border: 2px solid #ffe3e7;
+            position: relative;
+            overflow: hidden;
+        }
+        .card-box::before {
+            content: "🍓";
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 20px;
+            opacity: 0.3;
+        }
+        label {
+            display: block;
+            margin-top: 12px;
+            font-weight: bold;
+            font-size: 14px;
+            color: #7d666a;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            border: 2px solid #ffd0d6;
+            border-radius: 12px;
+            box-sizing: border-box;
+            font-size: 14px;
+            background-color: #fffcfd;
+            color: var(--text-color);
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(255, 143, 163, 0.2);
+        }
+        button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            margin-top: 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            box-shadow: 0 4px 12px rgba(255, 143, 163, 0.4);
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background-color: #ff758f;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 15px rgba(255, 117, 143, 0.5);
+        }
+        .log-item {
+            border-left: 6px solid var(--accent-color);
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #ffffff;
+            border-radius: 4px 18px 18px 4px;
+            box-shadow: 0 4px 10px rgba(255, 183, 197, 0.15);
+            border: 1px solid #ffeef1;
+            position: relative; /* 削除ボタンの配置用 */
+        }
+        
+        /* ❌ 削除ボタンの可愛いスタイリング */
+        .delete-btn {
+            background: none;
+            border: none;
+            color: #ccc;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 5px;
+            position: absolute;
+            top: 12px;
+            right: 15px;
+            width: auto;
+            box-shadow: none;
+            margin-top: 0;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+        .delete-btn:hover {
+            background: none;
+            color: #ff4d6d;
+            box-shadow: none;
+            transform: scale(1.15);
+        }
+
+        .badge {
+            background: var(--primary-color);
+            color: #7d3c47;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+        .dic-output {
+            margin-top: 15px;
+            padding: 15px;
+            background: #fff9fa;
+            border-radius: 14px;
+            border: 2px dashed var(--accent-color);
+            font-size: 14px;
+            color: var(--text-color);
+            line-height: 1.7;
+        }
+        .log-grid {
+            display: grid;
+            grid-template-columns: 140px 1fr;
+            gap: 8px 10px;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .log-label { font-weight: bold; color: #a38a8e; }
+        
+        .card-name-block {
+            margin-top: 8px;
+        }
+        .history-card-list {
+            margin: 0;
+            padding-left: 18px;
+            color: #e0536c;
+            font-weight: bold;
+        }
+        .bunny-separator {
+            text-align: center;
+            color: var(--primary-color);
+            font-size: 18px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="bunny-header">
+        <span style="font-size: 40px;">🐰🍓🔮</span>
+        <h1>タロットうさぎの占い屋さん</h1>
+        <p class="subtitle">ぴょんっと心を軽くする、あなただけのリーディングノート</p>
+    </div>
+
+    <div class="grid">
+        <div>
+            <div class="card-box">
+                <h2>✍️ 新しいリーディングを記録</h2>
+                <form id="logForm">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div>
+                            <label>📅 占った日付</label>
+                            <input type="date" id="date" required>
+                        </div>
+                        <div>
+                            <label>🍓 相談ジャンル</label>
+                            <select id="genre">
+                                <option value="仕事">仕事</option>
+                                <option value="恋愛">恋愛</option>
+                                <option value="人間関係">人間関係</option>
+                                <option value="人生">人生</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <label>📐 スプレッド（展開法）</label>
+                    <select id="spread" onchange="updateCardInputs()">
+                        <option value="ワンオラクル">ワンオラクル（1枚）</option>
+                        <option value="シンプルクロス">シンプルクロス（2枚）</option>
+                        <option value="スリーカード">スリーカード（3枚）</option>
+                        <option value="ダイヤモンドクロス">ダイヤモンドクロス（4枚）</option>
+                        <option value="二者択一">二者択一（5枚）</option>
+                        <option value="ヘキサグラム">ヘキサグラム（7枚）</option>
+                        <option value="ケルト十字">ケルト十字（10枚）</option>
+                    </select>
+
+                    <label>💬 相談内容（詳細）</label>
+                    <textarea id="detail" rows="2" placeholder="相談者様のお悩みや、占いたい内容の詳細を記入してください" required></textarea>
+
+                    <div id="dynamicCardNamesContainer" style="background: #fffcfd; padding: 14px; border-radius: 14px; margin-top: 12px; border: 2px solid #ffd0d6;">
+                        <label style="margin-top: 0; color: var(--accent-color);">🃏 出たカードを選択</label>
+                        <div id="cardFieldsWrapper"></div>
+                    </div>
+
+                    <label>🔮 カードからのメッセージ（総合解釈）</label>
+                    <textarea id="meaning" rows="4" placeholder="すべてのカードを総合して読み取った背景や、カード同士のつながり" required></textarea>
+
+                    <label>🐰 悩めるうさぎさんへのアドバイス</label>
+                    <textarea id="advice" rows="4" placeholder="相談者様の心に寄り添って紡いだ言葉・具体的な行動提案" required></textarea>
+
+                    <button type="submit">この内容をノートに保存する 🍓</button>
+                </form>
+            </div>
+        </div>
+
+        <div>
+            <div class="card-box">
+                <h2>📖 タロットキーワード辞典</h2>
+                <p style="font-size: 13px; color: #a38a8e; margin-top: -5px;">大アルカナから小アルカナまで78枚網羅！占う時のヒントにしてくださいね 🐰</p>
+                
+                <label>カードを選択 🍓</label>
+                <select id="dicSelect" onchange="showCardInfo()">
+                    </select>
+                <div id="dicResult" class="dic-output">
+                    カードを選択すると、正位置のコアなキーワードとうさぎのリーディング解説がここに表示されます。
+                </div>
+            </div>
+            <div class="bunny-separator">🍓 🐰 🍓 🐰 🍓</div>
+        </div>
+    </div>
+
+    <div class="card-box">
+        <h2>🔍 過去のリーディング履歴を検索 🔮</h2>
+        <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+            <div style="flex: 2;">
+                <input type="text" id="searchKeyword" placeholder="カード名、相談内容、解釈、アドバイスから検索..." oninput="displayLogs()">
+            </div>
+            <div style="flex: 1;">
+                <select id="filterGenre" onchange="displayLogs()">
+                    <option value="ALL">すべてのジャンル 🍓</option>
+                    <option value="仕事">仕事</option>
+                    <option value="恋愛">恋愛</option>
+                    <option value="人間関係">人間関係</option>
+                    <option value="人生">人生</option>
+                </select>
+            </div>
+        </div>
+        <div id="logsContainer"></div>
+    </div>
+</div>
+
+<script>
+    const baseCardList = [
+        /* 大アルカナ */
+        { val: "愚者", text: "0. 愚者", type: "major" }, { val: "魔術師", text: "1. 魔術師", type: "major" }, { val: "女教皇", text: "2. 女教皇", type: "major" },
+        { val: "女帝", text: "3. 女帝", type: "major" }, { val: "皇帝", text: "4. 皇帝", type: "major" }, { val: "法王", text: "5. 法王", type: "major" },
+        { val: "恋人", text: "6. 恋人", type: "major" }, { val: "戦車", text: "7. 戦車", type: "major" }, { val: "正義", text: "8. 正義", type: "major" },
+        { val: "隠者", text: "9. 隠者", type: "major" }, { val: "運命の輪", text: "10. 運命の輪", type: "major" }, { val: "力", text: "11. 力", type: "major" },
+        { val: "吊るされた男", text: "12. 吊るされた男", type: "major" }, { val: "死神", text: "13. 死神", type: "major" }, { val: "節制", text: "14. 節制", type: "major" },
+        { val: "悪魔", text: "15. 悪魔", type: "major" }, { val: "塔", text: "16. 塔", type: "major" }, { val: "星", text: "17. 星", type: "major" },
+        { val: "月", text: "18. 月", type: "major" }, { val: "太陽", text: "19. 太陽", type: "major" }, { val: "審判", text: "20. 審判", type: "major" },
+        { val: "世界", text: "21. 世界", type: "major" },
+        /* ワンド */
+        { val: "ワンドA", text: "ワンド A", type: "wand" }, { val: "ワンド2", text: "ワンド 2", type: "wand" }, { val: "ワンド3", text: "ワンド 3", type: "wand" },
+        { val: "ワンド4", text: "ワンド 4", type: "wand" }, { val: "ワンド5", text: "ワンド 5", type: "wand" }, { val: "ワンド6", text: "ワンド 6", type: "wand" },
+        { val: "ワンド7", text: "ワンド 7", type: "wand" }, { val: "ワンド8", text: "ワンド 8", type: "wand" }, { val: "ワンド9", text: "ワンド 9", type: "wand" },
+        { val: "ワンド10", text: "ワンド 10", type: "wand" }, { val: "ワンドペイジ", text: "ワンド ペイジ", type: "wand" }, { val: "ワンドナイト", text: "ワンド ナイト", type: "wand" },
+        { val: "ワンドクイーン", text: "ワンド クイーン", type: "wand" }, { val: "ワンドキング", text: "ワンド キング", type: "wand" },
+        /* カップ */
+        { val: "カップA", text: "カップ A", type: "cup" }, { val: "カップ2", text: "カップ 2", type: "cup" }, { val: "カップ3", text: "カップ 3", type: "cup" },
+        { val: "カップ4", text: "カップ 4", type: "cup" }, { val: "カップ5", text: "カップ 5", type: "cup" }, { val: "カップ6", text: "カップ 6", type: "cup" },
+        { val: "カップ7", text: "カップ 7", type: "cup" }, { val: "カップ8", text: "カップ 8", type: "cup" }, { val: "カップ9", text: "カップ 9", type: "cup" },
+        { val: "カップ10", text: "カップ 10", type: "cup" }, { val: "カップペイジ", text: "カップ ペイジ", type: "cup" }, { val: "カップナイト", text: "カップ ナイト", type: "cup" },
+        { val: "カップクイーン", text: "カップ クイーン", type: "cup" }, { val: "カップキング", text: "カップ キング", type: "cup" },
+        /* ソード */
+        { val: "ソードA", text: "ソード A", type: "sword" }, { val: "ソード2", text: "ソード 2", type: "sword" }, { val: "ソード3", text: "ソード 3", type: "sword" },
+        { val: "ソード4", text: "ソード 4", type: "sword" }, { val: "ソード5", text: "ソード 5", type: "sword" }, { val: "ソード6", text: "ソード 6", type: "sword" },
+        { val: "ソード7", text: "ソード 7", type: "sword" }, { val: "ソード8", text: "ソード 8", type: "sword" }, { val: "ソード9", text: "ソード 9", type: "sword" },
+        { val: "ソード10", text: "ソード 10", type: "sword" }, { val: "ソードペイジ", text: "ソード ペイジ", type: "sword" }, { val: "ソードナイト", text: "ソード ナイト", type: "sword" },
+        { val: "ソードクイーン", text: "ソード クイーン", type: "sword" }, { val: "ソードキング", text: "ソード キング", type: "sword" },
+        /* ペンタクル */
+        { val: "ペンタクルA", text: "ペンタクル A", type: "pentacle" }, { val: "ペンタクル2", text: "ペンタクル 2", type: "pentacle" }, { val: "ペンタクル3", text: "ペンタクル 3", type: "pentacle" },
+        { val: "ペンタクル4", text: "ペンタクル 4", type: "pentacle" }, { val: "ペンタクル5", text: "ペンタクル 5", type: "pentacle" }, { val: "ペンタクル6", text: "ペンタクル 6", type: "pentacle" },
+        { val: "ペンタクル7", text: "ペンタクル 7", type: "pentacle" }, { val: "ペンタクル8", text: "ペンタクル 8", type: "pentacle" }, { val: "ペンタクル9", text: "ペンタクル 9", type: "pentacle" },
+        { val: "ペンタクル10", text: "ペンタクル 10", type: "pentacle" }, { val: "ペンタクルペイジ", text: "ペンタクル ペイジ", type: "pentacle" }, { val: "ペンタクルナイト", text: "ペンタクル ナイト", type: "pentacle" },
+        { val: "ペンタクルクイーン", text: "ペンタクル クイーン", type: "pentacle" }, { val: "ペンタクルキング", text: "ペンタクル キング", type: "pentacle" }
+    ];
+
+    function getEmojiByType(type) {
+        switch(type) {
+            case "major": return "🔮";
+            case "wand": return "🔥";
+            case "cup": return "💧";
+            case "sword": return "⚔️";
+            case "pentacle": return "🪙";
+            default: return "🃏";
+        }
+    }
+
+    const cardDictionary = {
+        /* 大アルカナ */
+        "愚者": "【キーワード】自由、冒険、純粋、始まり、可能性<br>★固定観念にとらわれず、新しい一歩を気楽に踏み出すタイミングです🐰",
+        "魔術師": "【キーワード】スタート、才能、創造、準備万端、自信<br>★必要な道具や能力はすべて揃っています。自らの意思で行動を起こす時。",
+        "女教皇": "【キーワード】直感、秘密、完璧主義、恥ずかしさ、殻にこもる<br>★完璧を求めすぎるマイルールや恥ずかしさがブレーキになっている状況を示します。",
+        "女帝": "【キーワード】豊かさ、母性、包容力、実り、愛<br>★心も環境も満たされている状態。愛を受け取り、周囲を育む心の余裕がカギ🍓",
+        "皇帝": "【キーワード】リーダーシップ、責任、安定、支配、構築<br>★現実的な決断力とコントロールが必要な時。自分の軸をガシッと固めて進むべし。",
+        "法王": "【キーワード】真面目、常識、優しさ、マンネリ、ルール・信頼<br>★変化より安定を好む誠実さや、将来を見据えた堅実な姿勢を裏付けするカード。",
+        "恋人": "【キーワード】選択、調和、ときめき、コミュニケーション、直感<br>★自分の心がワクワクする心地よい選択、心地よい人間関係を直感で選ぶのが正解。🍓",
+        "戦車": "【キーワード】前進、勝利、コントロール、強い意志、スピードスター<br>★迷いを捨てて一気に突っ走る時。相反する2つの感情をコントロールして勝利を掴む。",
+        "正義": "【キーワード】バランス、公平、冷静、因果応報、正しい判断<br>★感情に流されず事実をもとに客観的・合理的な判断を下すのが吉。",
+        "隠者": "【キーワード】探求、内省、1人の時間、慎重、心の光<br>★答えは外ではなく内側にあります。静かに自分と向き合い、本質を見極める時間。",
+        "運命の輪": "【キーワード】転換点、チャンス、幸運の波、急展開、逆らわない<br>★ベストタイミングの到来！自分の力で抗おうとせず、この良い流れに乗っかるべし。",
+        "力": "【キーワード】精神力、忍耐、受け入れる強さ、コントロール、愛の和解<br>★腕力ではなく、優しさと粘り強い理性によって、困難や荒ぶる感情を飼い慣らす。",
+        "吊るされた男": "【キーワード】試練、方向転換、自己犠牲、視点を変える、充電期<br>★身動きが取れない時は、あえて逆の視点から物事を見るチャンス。焦りは禁物。",
+        "死神": "【キーワード】強制終了、リセット、未練を断つ、再生、新しい幕開け<br>★1つの物事がガラリと終わりを迎えます。それは次のステージへ進むための必要なリセット。",
+        "節制": "【キーワード】調和、循環、絶妙なコントロール、穏やかさ、歩み寄り<br>★異なる要素をうまく混ぜ合わせて最適なバランスを生み出す。穏やかなコミュニケーション。",
+        "悪魔": "【キーワード】誘惑、依存、執着、ぬるま湯、心の弱さ<br>★「ダメだと分かっているけれど離れられない」という強い執着や、甘い誘惑への警告。",
+        "塔": "【キーワード】突然の崩壊、衝撃、プライドの打破、価値観の激変<br>★想定外の出来事による変化。しかし、崩れた土台から全く新しい未来を築き直せます。",
+        "星": "【キーワード】希望、理想、憧れ、ひらめき、心の癒やし<br>★暗闇の中に輝く希望の光。目標を高く持ち、純粋な願いを持ち続けることで道が開けます。🍓",
+        "月": "【キーワード】不安、見えない未来、モヤモヤ、妄想、一時的な迷い<br>★先が見えなくて不安になりやすい時。輪郭がはっきりするまで、今は無理に動かないのが正解。",
+        "太陽": "【キーワード】成功、活力、祝福、無邪気、エネルギー全開<br>★圧倒的なポジティブさと成功！子供のような純粋な心で、今この瞬間を全力で楽しむ。🐰",
+        "審判": "【キーワード】復活、覚醒、吉報、過去の報われ、再挑戦<br>★諦めていたことへの再チャンスや、これまでの努力が最高の形で報われる復活の合図。",
+        "世界": "【キーワード】完成、完璧、ゴール、満足、ハッピーエンド<br>★最高潮の達成と一つのサイクルの完成。これ以上ない満足感と調和に満たされます。🍓",
+
+        /* ワンド */
+        "ワンドA": "【キーワード】情熱の始まり、ひらめき、やる気、出発<br>★エネルギーが湧き上がっています！新しい挑戦へ飛び出す絶好のチャンスです。",
+        "ワンド2": "【キーワード】野望、次のステップ、計画、未来への展望<br>★一つの成功を手にして、さらに広い世界へ注目して計画を練る段階です。",
+        "ワンド3": "【キーワード】進展、開拓、協力関係、視野を広げる<br>★船出の準備は完了。自分の可能性を信じて、より遠い未来を見据えて進みましょう。",
+        "ワンド4": "【キーワード】平和、収穫、リラックス、歓迎、安心ホーム<br>★ひとまず一安心！お家や居場所でほっこり息を抜いて、お祝いできる平和な状況です。🐰",
+        "ワンド5": "【キーワード】葛藤、競争、意見の衝突、切磋琢磨<br>★周りと本音でぶつかり合う時。エネルギーを発散して、お互いに成長しあえるステップです。",
+        "ワンド6": "【キーワード】勝利、凱旋、称賛、自信、リーダーシップ<br>★努力が認められて、注目の的になるハッピーな暗示！堂々と胸を張って進んで大丈夫。",
+        "ワンド7": "【キーワード】有利な立場、奮闘、守り抜く、孤軍奮闘<br>★少し忙しいけれど、あなたは有利な位置にいます。自分のポジションをしっかりキープして。",
+        "ワンド8": "【キーワード】急展開、迅速、追い風、チャンスの到来<br>★物事がすごいスピードで動き出します！テンポよく波に乗りましょう。🐰",
+        "ワンド9": "【キーワード】警戒、備え、粘り強さ、あと一息の辛抱<br>★過去の経験から対策を立てて待ち構える状態。諦めずに粘れば、しっかり守り抜けます。",
+        "ワンド10": "【キーワード】重圧、プレッシャー、抱え込みすぎ、キャパオーバー<br>★責任感が強すぎてタスクを一人で抱えすぎかも。ゴールは近いので周りを頼って心を軽くして。",
+        "ワンドペイジ": "【キーワード】朗報、ワクワクする少年、メッセンジャー、好奇心<br>★おもしろそうなニュースやインスピレーションが届く予感。ピュアな好奇心に従って吉。🍓",
+        "ワンドナイト": "【キーワード】突進、情熱、行動力、勇猛果敢、旅立ち<br>★迷わず一気に突っ走る高いエネルギー！熱い猛ダッシュの時です。",
+        "ワンドクイーン": "【キーワード】明るさ、魅力的、元気、親切、ポジティブオーラ<br>★ひまわりのように周囲を明るく照らす存在。自信を持って、温かい笑顔で人を包み込んで。🍓",
+        "ワンドキング": "【キーワード】決断力、カリスマ、頼れる存在、堂々とした態度<br>★強い信念を持ってチームを引っ張るリーダー。現実を動かす圧倒的なパワーが宿ります。",
+
+        /* カップ */
+        "カップA": "【キーワード】愛の始まり、溢れる感情、幸福、豊かな感受性<br>★心の器から幸せな気持ちや愛がジュワッと溢れ出します。新しい人間関係や潤いのスタート。🍓",
+        "カップ2": "【キーワード】相思相愛、絆、調和、対話、心の通じ合い<br>★目の前の相手と気持ちがぴったり通じ合う、とても心地よくて嬉しくなるような関係性。🐰",
+        "カップ3": "【キーワード】お祝い、仲間、歓喜、グループ、三位一体<br>★仲の良いお友達と楽しくおしゃべりしてリフレッシュ。喜びをみんなで分かち合う時。🍓",
+        "カップ4": "【キーワード】不満、退屈、現状維持、見落とし、迷思<br>★目の前に差し出されているチャンスや優しさに気づかず、ちょっと考え込んでしまっている状態。",
+        "カップ5": "【キーワード】喪失、後悔、失望、残された希望に目を向ける<br>★失ったものにがっかりしているかも。でも、まだ倒れていないカップ（希望）があることに気づいて。",
+        "カップ6": "【キーワード】郷愁、思い出、純粋、過去からの贈り物、再会<br>★昔の懐かしい記憶や、子供の頃のようなピュアな心を取り戻すことで、今が癒やされていきます。",
+        "カップ7": "【キーワード】目移り、妄想、選択肢の多さ、現実逃避<br>★あれこれ目移りして夢が膨みすぎているかも。幻想を現実的な計画に落とし込むのがカギ。",
+        "カップ8": "【キーワード】関心の移行、旅立ち、現状への見切り、精神的成長<br>★今まで価値を感じていたものをそっと置いて、新しいステップへ次の一歩を踏み出す引き際です。",
+        "カップ9": "【キーワード】願いが叶う、満ち足りた心、ご褒美、ウィッシュカード<br>★おめでとうございます！心も体も欲しかった状況もすっかり満たされる、最高のご褒美タイム。🐰",
+        "カップ10": "【キーワード】家族愛、幸福の完成、穏やかな日常、満ち足りた絆<br>★大切な人たちに囲まれて、これ以上ない温かい幸福感と心の調和に包まれるハッピーエンド。🍓",
+        "カップペイジ": "【キーワード】感性豊か、愛嬌、甘え上手、インスピレーション、夢見がち<br>★純粋で愛らしい心の持ち主。直感を大切に、素直な気持ちを表現すると愛されます。",
+        "カップナイト": "【キーワード】アプローチ、白馬の王子、ロマンチック、プロポーズ<br>★あなたに優しさや素敵な提案を持ってきてくれる人が現れる暗示。誘いには乗ってみて。🍓",
+        "カップクイーン": "【キーワード】深い慈愛、共感力、優しさ、包容力、芸術的感性<br>★相手の気持ちを我がことのように優しく受け止められる、とっても心の広い癒やしの存在。",
+        "カップキング": "【キーワード】感情のコントロール、寛大、心の安定、包容力<br>★どんなに波風が立っても、穏やかな広い心で受け止める包容力。頼れるカウンセラー。",
+
+        /* ソード */
+        "ソードA": "【キーワード】揺るぎない決意、勝利、理性のスタート、ブレない軸<br>★覚悟を決めて、自分の思考や言葉で人生を切り開いていく、強い意志の始まりです。",
+        "ソード2": "【キーワード】バランス、保留、葛藤、均衡、内なる声を聞く<br>★あわてて白黒つけず、あえて今は保留にして心のバランスを保つことが大切な時です。",
+        "ソード3": "【キーワード】心の傷、悲しみ、ショック、受け入れる心の痛み<br>★チクッと胸が痛む出来事。しかし、それは現実を直視し、心をクリアに浄化するためのプロセス。",
+        "ソード4": "【キーワード】休息、充電、一時停止、メディテーション、お昼寝<br>★今はゆっくりと体を横たえて、しっかり体力を回復させるためのお休み期間。🐰",
+        "ソード5": "【キーワード】手段を選ばない勝利、虚しさ、エゴ、利己的<br>★勝ったけれど誰も幸せにならない状況かも。プライドにこだわりすぎていないか見直して。",
+        "ソード6": "【キーワード】新天地、問題からの離脱、再出発、穏やかな方向へ<br>★苦しい状況から離れて、これから徐々に事態が落ち着いた方向へと進んでいく船出のサイン。",
+        "ソード7": "【キーワード】要領の良さ、抜け駆け、秘密の計画、慎重な行動<br>★正面突破ではなく、少し知恵を使ってスマートに立ち回るのが吉。コソコソしすぎには注意。",
+        "ソード8": "【キーワード】束縛、思い込み、身動きが取れない、自己制限<br>★周囲に縛られているようで、実は自分の思い込みが目隠しになっているかも。いつでも逃げ出せます。",
+        "ソード9": "【キーワード】不安、悪夢、思い詰め、夜も眠れない心配事<br>★頭の中で悪い妄想が膨みすぎている暗示。現現実はおそこまで悪くないので、まずは深呼吸して。🐰",
+        "ソード10": "【キーワード】どん底からの再生、終わり、リセット、夜明け前<br>★これ以上悪くならないどん底の状態。あとは上に向かって跳ね上がるだけの夜明け前です。",
+        "ソードペイジ": "【キーワード】リサーチ、警戒、情報収集、慎重、鋭い視点<br>★アンテナを高く張って、情報をしっかり集める時期。ちょっとした変化も見逃さないで。",
+        "ソードナイト": "【キーワード】急進、理性的、スピード、問題解決、論理的突破<br>★シャキッと頭をフル回転させて、迷わずシャープに課題をクリアしていくスピードスター。",
+        "ソードクイーン": "【キーワード】的確な判断、自立、誠実、冷静沈着、無駄のない言葉<br>★感情に流されず、事実をもとに「何が正しいか」をズバッと見極められるスマートな女性。🍓",
+        "ソードキング": "【キーワード】厳格なルール、支配力、高い知性、合理的決断<br>★圧倒的な知性と権威で、物事を白黒はっきりさせるプロフェッショナル。頼れる決断。",
+
+        /* ペンタクル */
+        "ペンタクルA": "【キーワード】現実的な豊かさ、チャンス、臨時収入、確かな第一歩<br>★新しいビジネスや、目に見える形としてのギフト・安定のチャンスが舞い込みます。🍓",
+        "ペンタクル2": "【キーワード】柔軟性、やりくり、要領が良い、変化を楽しむ<br>★二つのことを器用にジャグリングするように楽しむ時期。変化にしなやかに対応して。",
+        "ペンタクル3": "【キーワード】技術の向上、チームワーク、協力、ステップアップ<br>★仲間と専門知識を出し合って、素晴らしいものをコツコツ作り上げていく充実したプロセス。",
+        "ペンタクル4": "【キーワード】維持、執着、ケチ、安定へのこだわり、現状維持<br>★持っているものをがっちり守る安心感。でも、抱え込みすぎて変化を恐れないように注意。",
+        "ペンタクル5": "【キーワード】困窮、一時的なピンチ、視野の狭さ、気づかない救い<br>★少し経済的・精神的にしんどい時。でも、すぐ近くに助けてくれる場所（教会の光）があります。",
+        "ペンタクル6": "【キーワード】ギブアンドテイク、慈善、平等な分配、親切心、バランス<br>★お互いにとって対等で素晴らしい循環が生まれる時。優しさの受け取り上手、与え上手になって。🐰",
+        "ペンタクル7": "【キーワード】成果への不満、見直し、収穫の評価、次への計画<br>★ここまで頑張って育てた果実を見て、「もっと良くするにはどうしよう？」と立ち止まる見直し期。",
+        "ペンタクル8": "【キーワード】職人、コツコツ、地道な努力、スキルの習得、継続<br>★脇目も振らずに自分の作業に没頭する時期。積み重ねた努力は、将来必ず大きな財産になります。",
+        "ペンタクル9": "【キーワード】玉の輿、洗練された生活、経済的自立、才能の開花<br>★自分の才能や努力によって、優雅で最高に満たされたライフスタイルを手にするハッピーな暗示。🍓",
+        "ペンタクル10": "【キーワード】繁栄、資産、受け継がれるもの、大団円、満ち足りた基盤<br>★築き上げてきた富や家族の絆が、長期にわたって安定し繁栄していく最高のゴールステージ。🐰",
+        "ペンタクルペイジ": "【キーワード】勉強家、真面目、丁寧、じっくり学ぶ、将来への種まき<br>★目の前の課題にじっくり誠実に向き合う時期。焦らずに、確かな土台を作っていきましょう。",
+        "ペンタクルナイト": "【キーワード】着実、慎重、信頼できる、有言実行、スローペース<br>★スピードはゆっくりでも、絶対に約束を守り着実に成果を上げる、最も信頼できるナイト。",
+        "ペンタクルクイーン": "【キーワード】心の余裕、おもてなし、安定感、豊かなお母さん<br>★美味しいおやつを用意して周囲を包み込むような、抜群の包容力と現実的な生活力を持つ存在。🍓",
+        "ペンタクルキング": "【キーワード】大富豪、成功者、安定の極み、現実的な成果、守る力<br>★これまでの努力が最大の富と実績になり、どっしりと椅子に腰掛けて全てをコントロールする完成形。"
+    };
+
+    // 識別のため、デフォルトログに一意のid (タイムスタンプ) を初期付与します
+    const defaultLogs = [
+        { 
+            id: 1718460000000,
+            date: "2026-06-15", 
+            genre: "仕事", 
+            spread: "ワンオラクル", 
+            detail: "新プロジェクトのリーダーを任されたがプレッシャーがすごい。頑張れるか？", 
+            cardNames: ["カードからのメッセージ ： ワンド 10 (正位置)"],
+            meaning: "目標の達成や一つの完成形を迎えるのはもうすぐ。タスクを抱えすぎている状態。", 
+            advice: "プレッシャーを抱えながらも頑張りたいという気持ちが表れています。ゴールはもうすぐなので、一人で抱えすぎず周りを頼って。頑張れば必ず達成できます！" 
+        },
+        { 
+            id: 1718460100000,
+            date: "2026-06-15", 
+            genre: "恋愛", 
+            spread: "ワンオラクル", 
+            detail: "職場の気になる後輩（男性）と仕事以外のプライベートな関係へ一歩踏み出したい。", 
+            cardNames: ["カードからのメッセージ ： 2. 女教皇 (正位置)"],
+            meaning: "「完璧な先輩」というマイルールや恥ずかしさが殻（ベール）を作ってブレーキになっている状態。", 
+            advice: "先輩としての顔と女性としての顔の切り替えに、恥ずかしさもありますよね。関係性はこれから築いていくもの。自分の殻を破って、プライベートな自分らしさを出した会話から始めてみては？" 
+        },
+        { 
+            id: 1718460200000,
+            date: "2026-06-15", 
+            genre: "恋愛", 
+            spread: "ワンオラクル", 
+            detail: "彼とのデートがいつもチェーン店や家ばかりでマンネリ。大切にされているか不安。", 
+            cardNames: ["カードからのメッセージ ： 5. 法王 (正位置)"],
+            meaning: "彼は大きな変化より安定を好むタイプ。真面目で、将来のために堅実にお金を貯めている可能性。", 
+            advice: "彼は安定した日常に安心する真面目なタイプ。大切にしていない訳ではなく、むしろ将来を見据えて堅実に考えているかも。彼の気持ちも尊重しつつ、「好きだからこそ色んな経験を一緒にしたいな」と新しいデートを提案してみては？" 
+        },
+        { 
+            id: 1718460300000,
+            date: "2026-06-15", 
+            genre: "人生", 
+            spread: "ワンオラクル", 
+            detail: "今日のアドバイス（日課のワンオラクル練習）", 
+            cardNames: ["カードからのメッセージ ： ソード 2 (正位置)"],
+            meaning: "2本の剣を交差させてバランスを取る。あわてて白黒つけず、保留にすることの重要性。", 
+            advice: "思考することは大切。選ぶよりバランスを意識する、内なる声を聞く。" 
+        }
+    ];
+
+    let myLogs = JSON.parse(localStorage.getItem('tarot_logs_rabbit_positions_v1')) || defaultLogs;
+
+    const spreadPositions = {
+        "ワンオラクル": ["カードからのメッセージ"],
+        "シンプルクロス": ["現状", "アドバイス"],
+        "スリーカード": ["過去", "現在", "未来"],
+        "ダイヤモンドクロス": ["本人の気持ち", "相手の気持ち", "2人の現状", "2人の未来"],
+        "二者択一": ["現状", "Aの近い未来", "Aの結果", "Bの近い未来", "Bの結果"],
+        "ヘキサグラム": ["過去", "現在", "未来", "アドバイス", "本心", "環境や相手", "結論"],
+        "ケルト十字": ["現状", "今の問題", "過去", "未来", "潜在意識や根底にあるもの", "顕在意識や自覚するもの", "本人の状況", "環境", "願望や恐れ", "結論"]
+    };
+
+    window.onload = function() {
+        document.getElementById('date').valueAsDate = new Date();
+        initDictionarySelect();
+        updateCardInputs();
+        displayLogs();
+    };
+
+    function initDictionarySelect() {
+        const dicSelect = document.getElementById('dicSelect');
+        dicSelect.innerHTML = '<option value="">-- カードを選択してください --</option>';
+        baseCardList.forEach(item => {
+            const emoji = getEmojiByType(item.type);
+            const opt = document.createElement('option');
+            opt.value = item.val;
+            opt.textContent = emoji + " " + item.text;
+            dicSelect.appendChild(opt);
+        });
+    }
+
+    function updateCardInputs() {
+        const spread = document.getElementById('spread').value;
+        const positions = spreadPositions[spread] || ["カード"];
+        const wrapper = document.getElementById('cardFieldsWrapper');
+        wrapper.innerHTML = "";
+
+        positions.forEach(pos => {
+            const div = document.createElement('div');
+            div.className = 'card-name-block';
+            
+            let selectHtml = `<label style='font-size:12px; margin-top:5px; color:#a38a8e;'>🍓 ${pos}</label>`;
+            selectHtml += `<select class="card-name-input" data-position="${pos}" required>`;
+            selectHtml += `<option value="">-- カードを選択してください --</option>`;
+            
+            baseCardList.forEach(item => {
+                const emoji = getEmojiByType(item.type);
+                selectHtml += `<option value="${item.text} (正位置)">${emoji} ${item.text} (正位置)</option>`;
+                selectHtml += `<option value="${item.text} (逆位置)">${emoji} ${item.text} (逆位置)</option>`;
+            });
+            
+            selectHtml += `</select>`;
+            div.innerHTML = selectHtml;
+            wrapper.appendChild(div);
+        });
+    }
+
+    function showCardInfo() {
+        const selected = document.getElementById('dicSelect').value;
+        const resultDiv = document.getElementById('dicResult');
+        resultDiv.innerHTML = cardDictionary[selected] || "カードを選択すると、正位置のコアなキーワードとうさぎのリーディング解説がここに表示されます。";
+    }
+
+    function displayLogs() {
+        const keyword = document.getElementById('searchKeyword').value.toLowerCase();
+        const genreFilter = document.getElementById('filterGenre').value;
+        const container = document.getElementById('logsContainer');
+        container.innerHTML = "";
+
+        const sortedLogs = [...myLogs].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        sortedLogs.forEach(log => {
+            const cardsString = log.cardNames.join(" ");
+            const matchesKeyword = log.detail.toLowerCase().includes(keyword) || 
+                                   log.spread.toLowerCase().includes(keyword) || 
+                                   cardsString.toLowerCase().includes(keyword) ||
+                                   log.meaning.toLowerCase().includes(keyword) || 
+                                   log.advice.toLowerCase().includes(keyword);
+            const matchesGenre = (genreFilter === "ALL" || log.genre === genreFilter);
+
+            if (matchesKeyword && matchesGenre) {
+                let cardsListHtml = log.cardNames.map(name => `<li>${name}</li>`).join("");
+
+                // 削除ボタン付きのログアイテムを生成 (log.idを引数に渡す)
+                const div = document.createElement('div');
+                div.className = 'log-item';
+                div.innerHTML = `
+                    <button class="delete-btn" onclick="deleteLog(${log.id})" title="この記録を削除する">❌</button>
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding-right:30px;">
+                        <strong>📅 ${log.date}</strong>
+                        <div>
+                            <span class="badge" style="background:#fff0f2; color:#ff758f;">${log.spread}</span>
+                            <span class="badge">🍓 ${log.genre}</span>
+                        </div>
+                    </div>
+                    <div class="log-grid">
+                        <div class="log-label">🐰【相談内容】</div><div>${log.detail}</div>
+                        <div class="log-label">🃏【展開カード】</div>
+                        <div>
+                            <ul class="history-card-list">${cardsListHtml}</ul>
+                        </div>
+                        <div class="log-label">📝【カードの解釈】</div><div style="font-style:italic; color:#7d666a;">${log.meaning}</div>
+                        <div class="log-label">💬【伝えたアドバイス】</div><div style="font-weight:bold; color:#ff5d7d;">${log.advice}</div>
+                    </div>
+                `;
+                container.appendChild(div);
+            }
+        });
+
+        if (container.innerHTML === "") {
+            container.innerHTML = "<p style='color:#999; text-align:center;'>該当するリーディング記録が見つかりません。🐰</p>";
+        }
+    }
+
+    // 個別削除を実効する新しい関数
+    function deleteLog(id) {
+        if (!id) return;
+        
+        // 念のための確認ウインドウを表示
+        const confirmDelete = confirm("この占いの記録をノートから削除しても大丈夫？🐰");
+        if (confirmDelete) {
+            // 指定されたid以外のログを残すことで削除
+            myLogs = myLogs.filter(log => log.id !== id);
+            localStorage.setItem('tarot_logs_rabbit_positions_v1', JSON.stringify(myLogs));
+            displayLogs(); // 履歴をリフレッシュ
+        }
+    }
+
+    document.getElementById('logForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const nameInputs = document.querySelectorAll('.card-name-input');
+        const cardNamesData = [];
+        nameInputs.forEach(select => {
+            if(select.value !== "") {
+                const pos = select.getAttribute('data-position');
+                cardNamesData.push(`${pos} ： ${select.value}`);
+            }
+        });
+        
+        const newLog = {
+            id: Date.now(), // 新規登録時に一意のID（タイムスタンプ）を付与
+            date: document.getElementById('date').value,
+            genre: document.getElementById('genre').value,
+            spread: document.getElementById('spread').value,
+            detail: document.getElementById('detail').value,
+            cardNames: cardNamesData,
+            meaning: document.getElementById('meaning').value,
+            advice: document.getElementById('advice').value
+        };
+
+        myLogs.push(newLog);
+        localStorage.setItem('tarot_logs_rabbit_positions_v1', JSON.stringify(myLogs));
+
+        displayLogs();
+        
+        document.getElementById('detail').value = "";
+        document.getElementById('meaning').value = "";
+        document.getElementById('advice').value = "";
+        updateCardInputs();
+        
+        alert("占い記録をノートに保存したよ！🐰🍓");
+    });
+</script>
+</body>
+</html>
