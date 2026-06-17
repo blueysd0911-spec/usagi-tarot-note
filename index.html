@@ -197,7 +197,61 @@
             font-size: 18px;
             margin: 10px 0;
         }
-        
+
+        /* 新しく追加した過去の解釈表示エリアのスタイル */
+        .past-readings-box {
+            margin-top: 10px;
+            padding: 12px;
+            background-color: #fff0f3;
+            border-radius: 12px;
+            border-left: 4px solid var(--accent-color);
+            font-size: 13px;
+        }
+        .past-readings-title {
+            font-weight: bold;
+            color: #d94e6c;
+            margin-bottom: 5px;
+        }
+        .past-readings-list {
+            margin: 0;
+            padding-left: 15px;
+            color: #5d4f52;
+        }
+        .past-readings-list li {
+            margin-bottom: 4px;
+        }
+
+        /* 💾 バックアップボタン用のスタイル */
+        .backup-btn-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        .btn-sub {
+            background-color: #a38a8e;
+            box-shadow: 0 4px 12px rgba(163, 138, 142, 0.3);
+            margin-top: 0;
+        }
+        .btn-sub:hover {
+            background-color: #7d666a;
+            box-shadow: 0 6px 15px rgba(125, 102, 106, 0.4);
+        }
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -272,6 +326,20 @@
                     カードを選択すると、正位置のコアなキーワードとうさぎのリーディング解説がここに表示されます。
                 </div>
             </div>
+
+            <div class="card-box" style="border: 2px solid #e1d7d9; background: #faf6f7;">
+                <h2>💾 ノートのバックアップと復元</h2>
+                <p style="font-size: 13px; color: #a38a8e; margin-top: -5px;">スマホの機種変更や、大事なデータの保存用に使ってね 🐰</p>
+                
+                <div class="backup-btn-grid">
+                    <button class="btn-sub" onclick="exportData()">📤 ファイルに保存</button>
+                    <div class="file-input-wrapper">
+                        <button class="btn-sub" style="width:100%;">📥 データを読み込む</button>
+                        <input type="file" id="importFile" accept=".json" onchange="importData(this)">
+                    </div>
+                </div>
+            </div>
+
             <div class="bunny-separator">🍓 🐰 🍓 🐰 🍓</div>
         </div>
     </div>
@@ -408,9 +476,9 @@
         "ソード4": "【キーワード】休息、充電、一時停止、メディテーション、お昼寝<br>★今はゆっくりと体を横たえて、しっかり体力を回復させるためのお休み期間。🐰",
         "ソード5": "【キーワード】手段を選ばない勝利、虚しさ、エゴ、利己的<br>★勝ったけれど誰も幸せにならない状況かも。プライドにこだわりすぎていないか見直して。",
         "ソード6": "【キーワード】新天地、問題からの離脱、再出発、穏やかな方向へ<br>★苦しい状況から離れて、これから徐々に事態が落ち着いた方向へと進んでいく船出のサイン。",
-        "ソード7": "【キーワード】要領の良さ、抜け駆け、秘密の計画、慎重な行動<br>★正面突破ではなく、少し知恵を使ってスマートに立ち回るのが吉。コソコソしすぎには注意。",
+        "ソード7": "【キーワード】要領の良さ、抜け駆け、秘密の計画、慎重な行動<br>★正面突破ではなく、少し知えを使ってスマートに立ち回るのが吉。コソコソしすぎには注意。",
         "ソード8": "【キーワード】束縛、思い込み、身動きが取れない、自己制限<br>★周囲に縛られているようで、実は自分の思い込みが目隠しになっているかも。いつでも逃げ出せます。",
-        "ソード9": "【キーワード】不安、悪夢、思い詰め、夜も眠れない心配事<br>★頭の中で悪い妄想が膨みすぎている暗示。現現実はおそこまで悪くないので、まずは深呼吸して。🐰",
+        "ソード9": "【キーワード】不安、悪夢、思い詰め、夜も眠れない心配事<br>★頭の中で悪い妄想が膨みすぎている暗示。現実はおそこまで悪くないので、まずは深呼吸して。🐰",
         "ソード10": "【キーワード】どん底からの再生、終わり、リセット、夜明け前<br>★これ以上悪くならないどん底の状態。あとは上に向かって跳ね上がるだけの夜明け前です。",
         "ソードペイジ": "【キーワード】リサーチ、警戒、情報収集、慎重、鋭い視点<br>★アンテナを高く張って、情報をしっかり集める時期。ちょっとした変化も見逃さないで。",
         "ソードナイト": "【キーワード】急進、理性的、スピード、問題解決、論理的突破<br>★シャキッと頭をフル回転させて、迷わずシャープに課題をクリアしていくスピードスター。",
@@ -418,7 +486,7 @@
         "ソードキング": "【キーワード】厳格なルール、支配力、高い知性、合理的決断<br>★圧倒的な知性と権威で、物事を白黒はっきりさせるプロフェッショナル。頼れる決断。",
 
         /* ペンタクル */
-        "ペンタクルA": "【キーワード】現実的な豊かさ、チャンス、臨時収入、確かな第一歩<br>★新しいビジネスや、目に見える形としてのギフト・安定のチャンスが舞い込みます。🍓",
+        "ペンタクルA": "【キーワード】現実的な豊かさ、チャンス、臨時収入、確かな第一歩<br>★新しいビジネスや、目見える形としてのギフト・安定のチャンスが舞い込みます。🍓",
         "ペンタクル2": "【キーワード】柔軟性、やりくり、要領が良い、変化を楽しむ<br>★二つのことを器用にジャグリングするように楽しむ時期。変化にしなやかに対応して。",
         "ペンタクル3": "【キーワード】技術の向上、チームワーク、協力、ステップアップ<br>★仲間と専門知識を出し合って、素晴らしいものをコツコツ作り上げていく充実したプロセス。",
         "ペンタクル4": "【キーワード】維持、執着、ケチ、安定へのこだわり、現状維持<br>★持っているものをがっちり守る安心感。でも、抱え込みすぎて変化を恐れないように注意。",
@@ -515,30 +583,101 @@
         const wrapper = document.getElementById('cardFieldsWrapper');
         wrapper.innerHTML = "";
 
-        positions.forEach(pos => {
+        positions.forEach((pos, index) => {
             const div = document.createElement('div');
             div.className = 'card-name-block';
             
             let selectHtml = `<label style='font-size:12px; margin-top:5px; color:#a38a8e;'>🍓 ${pos}</label>`;
-            selectHtml += `<select class="card-name-input" data-position="${pos}" required>`;
+            selectHtml += `<select class="card-name-input" data-position="${pos}" onchange="checkPastReadingsForForm(this, ${index})" required>`;
             selectHtml += `<option value="">-- カードを選択してください --</option>`;
             
             baseCardList.forEach(item => {
                 const emoji = getEmojiByType(item.type);
-                selectHtml += `<option value="${item.text} (正位置)">${emoji} ${item.text} (正位置)</option>`;
-                selectHtml += `<option value="${item.text} (逆位置)">${emoji} ${item.text} (逆位置)</option>`;
+                selectHtml += `<option value="${item.text} (正位置)" data-basekey="${item.val}">${emoji} ${item.text} (正位置)</option>`;
+                selectHtml += `<option value="${item.text} (逆位置)" data-basekey="${item.val}">${emoji} ${item.text} (逆位置)</option>`;
             });
             
             selectHtml += `</select>`;
+            // フォーム入力直下に過去の解釈を表示するための枠を用意
+            selectHtml += `<div id="formPastReadings_${index}" class="past-readings-box" style="display:none;"></div>`;
+            
             div.innerHTML = selectHtml;
             wrapper.appendChild(div);
         });
     }
 
+    // フォーム内でカードが選ばれた時、そのカードの過去の解釈をすぐ下に表示する関数
+    function checkPastReadingsForForm(selectElement, index) {
+        const targetDiv = document.getElementById(`formPastReadings_${index}`);
+        if (!selectElement.value) {
+            targetDiv.style.display = "none";
+            return;
+        }
+
+        // 選択されたオプションから、カードのベース名（例: "女教皇"）を取得
+        const selectedOption = selectElement.options[selectElement.selectedIndex];
+        const baseKey = selectedOption.getAttribute('data-basekey');
+        const fullCardName = selectElement.value; // 例: "2. 女教皇 (正位置)"
+
+        // 過去のログから、このカードが含まれるログを抽出
+        const matchedLogs = myLogs.filter(log => {
+            return log.cardNames.some(name => name.includes(fullCardName));
+        });
+
+        if (matchedLogs.length > 0) {
+            targetDiv.style.display = "block";
+            let html = `<div class="past-readings-title">🐰 過去にこのカードが出た時のメモ（最新3件）：</div><ul class="past-readings-list">`;
+            // 最新の3件を表示
+            const recents = [...matchedLogs].sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 3);
+            recents.forEach(log => {
+                html += `<li><strong>${log.date} (${log.genre})</strong>: ${log.meaning}</li>`;
+            });
+            html += `</ul>`;
+            targetDiv.innerHTML = html;
+        } else {
+            targetDiv.style.display = "block";
+            targetDiv.innerHTML = `<div style="color:#a38a8e; font-style:italic;">🐰 このカード（${fullCardName}）はノートにまだ記録がないよ！新しい出会いだね🍓</div>`;
+        }
+    }
+
+    // 📖 キーワード辞典側でカードが選ばれた際の表示処理
     function showCardInfo() {
         const selected = document.getElementById('dicSelect').value;
         const resultDiv = document.getElementById('dicResult');
-        resultDiv.innerHTML = cardDictionary[selected] || "カードを選択すると、正位置のコアなキーワードとうさぎのリーディング解説がここに表示されます。";
+        
+        if (!selected) {
+            resultDiv.innerHTML = "カードを選択すると、正位置のコアなキーワードとうさぎのリーディング解説がここに表示されます。";
+            return;
+        }
+
+        // 基本のキーワード辞典データを取得
+        let outputHtml = cardDictionary[selected] || "解説データの準備中です。";
+
+        // 過去ログから、そのカード名（例: "女教皇"）が含まれるものをすべて抽出
+        const matchedLogs = myLogs.filter(log => {
+            return log.cardNames.some(name => name.includes(selected));
+        });
+
+        outputHtml += "<br><hr style='border:0; border-top:1px dashed #ffb7c5; margin:12px 0;'>";
+
+        if (matchedLogs.length > 0) {
+            outputHtml += `<div style="font-weight:bold; color:#ff758f; margin-bottom:5px;">🔮 あなたの過去のリーディング（計 ${matchedLogs.length} 回出現）：</div>`;
+            outputHtml += `<ul style="margin:0; padding-left:18px; font-size:13px; color:#6d5559;">`;
+            
+            // 新しい日付順に並び替えて一覧表示
+            const sortedMatched = [...matchedLogs].sort((a,b) => new Date(b.date) - new Date(a.date));
+            sortedMatched.forEach(log => {
+                const posName = log.cardNames.find(name => name.includes(selected)) || "";
+                outputHtml += `<li style="margin-bottom:6px;"><strong>${log.date} 【${log.genre}】</strong> (${log.spread})<br>`;
+                outputHtml += `<span style="color:#a38a8e;">位置: ${posName.split(' ： ')[0] || '展開'}</span><br>`;
+                outputHtml += `┗ <span style="font-style:italic;">解釈: ${log.meaning}</span></li>`;
+            });
+            outputHtml += `</ul>`;
+        } else {
+            outputHtml += `<div style="color:#a38a8e; font-style:italic; font-size:13px;">🐰 このカードはまだ占いの記録がないみたい。これからたくさん引いていこうね🐾</div>`;
+        }
+
+        resultDiv.innerHTML = outputHtml;
     }
 
     function displayLogs() {
@@ -561,7 +700,6 @@
             if (matchesKeyword && matchesGenre) {
                 let cardsListHtml = log.cardNames.map(name => `<li>${name}</li>`).join("");
 
-                // 削除ボタン付きのログアイテムを生成 (log.idを引数に渡す)
                 const div = document.createElement('div');
                 div.className = 'log-item';
                 div.innerHTML = `
@@ -592,18 +730,78 @@
         }
     }
 
-    // 個別削除を実効する新しい関数
+    // 個別削除を実行する関数
     function deleteLog(id) {
         if (!id) return;
         
-        // 念のための確認ウインドウを表示
         const confirmDelete = confirm("この占いの記録をノートから削除しても大丈夫？🐰");
         if (confirmDelete) {
-            // 指定されたid以外のログを残すことで削除
             myLogs = myLogs.filter(log => log.id !== id);
             localStorage.setItem('tarot_logs_rabbit_positions_v1', JSON.stringify(myLogs));
-            displayLogs(); // 履歴をリフレッシュ
+            displayLogs();
+            showCardInfo();
         }
+    }
+
+    // 📤 データをファイル（JSON）としてエクスポート（ダウンロード）する関数
+    function exportData() {
+        if (myLogs.length === 0) {
+            alert("ノートに記録がありません。まずは占いを記録してみてね🐰");
+            return;
+        }
+        
+        // 保存する日付をファイル名に入れる (例: tarot_backup_2026-06-17.json)
+        const todayStr = new Date().toISOString().split('T')[0];
+        const filename = `tarot_backup_${todayStr}.json`;
+        
+        // 文字列にしてデータ化
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(myLogs, null, 2));
+        
+        // 擬似的なダウンロードリンクを作って自動クリック
+        const downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute("href", dataStr);
+        downloadAnchor.setAttribute("download", filename);
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.remove();
+        
+        alert("うさぎのノートをファイルにバックアップしました！🍓 大事な場所に保管してね。");
+    }
+
+    // 📥 バックアップファイル（JSON）からデータを読み込んで上書き・復元する関数
+    function importData(input) {
+        const file = input.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const importedLogs = JSON.parse(e.target.result);
+                
+                // 簡単なデータ構造のチェック
+                if (Array.isArray(importedLogs)) {
+                    const confirmImport = confirm("ファイルを読み込みます。現在のノートの内容が上書きされますがよろしいですか？🐰");
+                    if (confirmImport) {
+                        myLogs = importedLogs;
+                        localStorage.setItem('tarot_logs_rabbit_positions_v1', JSON.stringify(myLogs));
+                        
+                        // 画面全体をリフレッシュ
+                        displayLogs();
+                        updateCardInputs();
+                        if(document.getElementById('dicSelect').value) showCardInfo();
+                        
+                        alert("ノートの復元・お引っ越しが完了しました！🔮🐰");
+                    }
+                } else {
+                    alert("ファイルの形式が正しくないみたいです。うさぎのバックアップファイルを指定してね🍓");
+                }
+            } catch (err) {
+                alert("ファイルの読み込み中にエラーが発生しました。");
+            }
+            // 連続で同じファイルを読み込めるように選択をリセット
+            input.value = "";
+        };
+        reader.readAsText(file);
     }
 
     document.getElementById('logForm').addEventListener('submit', function(e) {
@@ -619,7 +817,7 @@
         });
         
         const newLog = {
-            id: Date.now(), // 新規登録時に一意のID（タイムスタンプ）を付与
+            id: Date.now(), 
             date: document.getElementById('date').value,
             genre: document.getElementById('genre').value,
             spread: document.getElementById('spread').value,
