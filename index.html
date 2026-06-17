@@ -128,7 +128,7 @@
             border-radius: 4px 18px 18px 4px;
             box-shadow: 0 4px 10px rgba(255, 183, 197, 0.15);
             border: 1px solid #ffeef1;
-            position: relative; /* 削除ボタンの配置用 */
+            position: relative;
         }
         
         /* ❌ 削除ボタンの可愛いスタイリング */
@@ -152,6 +152,29 @@
             color: #ff4d6d;
             box-shadow: none;
             transform: scale(1.15);
+        }
+
+        /* 📝 編集ボタンのスタイリング */
+        .edit-btn {
+            background: #fff0f2;
+            color: #ff758f;
+            border: 1px solid #ffd0d6;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            width: auto;
+            margin-top: 0;
+            box-shadow: none;
+            display: inline-block;
+            transition: all 0.2s ease;
+        }
+        .edit-btn:hover {
+            background: #ff758f;
+            color: white;
+            box-shadow: none;
+            transform: translateY(-1px);
         }
 
         .badge {
@@ -198,7 +221,6 @@
             margin: 10px 0;
         }
 
-        /* 新しく追加した過去の解釈表示エリアのスタイル */
         .past-readings-box {
             margin-top: 10px;
             padding: 12px;
@@ -221,7 +243,6 @@
             margin-bottom: 4px;
         }
 
-        /* 💾 バックアップボタン用のスタイル */
         .backup-btn-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -252,6 +273,12 @@
             height: 100%;
             cursor: pointer;
         }
+        
+        /* 🚨 編集モード中のフォームハイライト */
+        .editing-mode {
+            border-color: #ff4d6d !important;
+            background-color: #fff0f2 !important;
+        }
     </style>
 </head>
 <body>
@@ -265,9 +292,12 @@
 
     <div class="grid">
         <div>
-            <div class="card-box">
-                <h2>✍️ 新しいリーディングを記録</h2>
+            <div class="card-box" id="formContainer">
+                <h2 id="formTitle">✍️ 新しいリーディングを記録</h2>
                 <form id="logForm">
+                    <!-- 現在編集中のIDを隠し持つ用 -->
+                    <input type="hidden" id="editingId" value="">
+
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                         <div>
                             <label>📅 占った日付</label>
@@ -276,10 +306,14 @@
                         <div>
                             <label>🍓 相談ジャンル</label>
                             <select id="genre">
-                                <option value="仕事">仕事</option>
-                                <option value="恋愛">恋愛</option>
-                                <option value="人間関係">人間関係</option>
-                                <option value="人生">人生</option>
+                                <option value="相手の気持ち">相手の気持ち</option>
+                                <option value="恋愛・出会い">恋愛・出会い</option>
+                                <option value="復縁・複雑愛">復縁・複雑愛</option>
+                                <option value="仕事・適職">仕事・適職</option>
+                                <option value="金運・豊かさ">金運・豊かさ</option>
+                                <option value="対人関係・家族">対人関係・家族</option>
+                                <option value="今日の運勢・日常">今日の運勢・日常</option>
+                                <option value="人生・未来の選択">人生・未来の選択</option>
                             </select>
                         </div>
                     </div>
@@ -309,7 +343,8 @@
                     <label>🐰 悩めるうさぎさんへのアドバイス</label>
                     <textarea id="advice" rows="4" placeholder="相談者様の心に寄り添って紡いだ言葉・具体的な行動提案" required></textarea>
 
-                    <button type="submit">この内容をノートに保存する 🍓</button>
+                    <button type="submit" id="submitBtn">この内容をノートに保存する 🍓</button>
+                    <button type="button" id="cancelEditBtn" style="background-color:#a38a8e; display:none; margin-top:10px;" onclick="cancelEditing()">編集をキャンセルする 🐰</button>
                 </form>
             </div>
         </div>
@@ -353,10 +388,14 @@
             <div style="flex: 1;">
                 <select id="filterGenre" onchange="displayLogs()">
                     <option value="ALL">すべてのジャンル 🍓</option>
-                    <option value="仕事">仕事</option>
-                    <option value="恋愛">恋愛</option>
-                    <option value="人間関係">人間関係</option>
-                    <option value="人生">人生</option>
+                    <option value="相手の気持ち">相手の気持ち</option>
+                    <option value="恋愛・出会い">恋愛・出会い</option>
+                    <option value="復縁・複雑愛">復縁・複雑愛</option>
+                    <option value="仕事・適職">仕事・適職</option>
+                    <option value="金運・豊かさ">金運・豊かさ</option>
+                    <option value="対人関係・家族">対人関係・家族</option>
+                    <option value="今日の運勢・日常">今日の運勢・日常</option>
+                    <option value="人生・未来の選択">人生・未来の選択</option>
                 </select>
             </div>
         </div>
@@ -367,7 +406,7 @@
 <script>
     const baseCardList = [
         /* 大アルカナ */
-        { val: "愚者", text: "0. 愚者", type: "major" }, { val: "魔術師", text: "1. 魔術師", type: "major" }, { val: "女教皇", text: "2. 女教皇", type: "major" },
+        { val: "愚者", text: "0. 愚者", type: "major" }, { val: "魔術師", text: "1.魔術師", type: "major" }, { val: "女教皇", text: "2. 女教皇", type: "major" },
         { val: "女帝", text: "3. 女帝", type: "major" }, { val: "皇帝", text: "4. 皇帝", type: "major" }, { val: "法王", text: "5. 法王", type: "major" },
         { val: "恋人", text: "6. 恋人", type: "major" }, { val: "戦車", text: "7. 戦車", type: "major" }, { val: "正義", text: "8. 正義", type: "major" },
         { val: "隠者", text: "9. 隠者", type: "major" }, { val: "運命の輪", text: "10. 運命の輪", type: "major" }, { val: "力", text: "11. 力", type: "major" },
@@ -476,9 +515,9 @@
         "ソード4": "【キーワード】休息、充電、一時停止、メディテーション、お昼寝<br>★今はゆっくりと体を横たえて、しっかり体力を回復させるためのお休み期間。🐰",
         "ソード5": "【キーワード】手段を選ばない勝利、虚しさ、エゴ、利己的<br>★勝ったけれど誰も幸せにならない状況かも。プライドにこだわりすぎていないか見直して。",
         "ソード6": "【キーワード】新天地、問題からの離脱、再出発、穏やかな方向へ<br>★苦しい状況から離れて、これから徐々に事態が落ち着いた方向へと進んでいく船出のサイン。",
-        "ソード7": "【キーワード】要領の良さ、抜け駆け、秘密の計画、慎重な行動<br>★正面突破ではなく、少し知えを使ってスマートに立ち回るのが吉。コソコソしすぎには注意。",
+        "ソード7": "【キーワード】要領の良さ、抜け駆け、秘密の計画、慎重な行動<br>★正面突破ではなく、少し知恵を使ってスマートに立ち回るのが吉。コソコソしすぎには注意。",
         "ソード8": "【キーワード】束縛、思い込み、身動きが取れない、自己制限<br>★周囲に縛られているようで、実は自分の思い込みが目隠しになっているかも。いつでも逃げ出せます。",
-        "ソード9": "【キーワード】不安、悪夢、思い詰め、夜も眠れない心配事<br>★頭の中で悪い妄想が膨みすぎている暗示。現実はおそこまで悪くないので、まずは深呼吸して。🐰",
+        "ソード9": "【キーワード】不安、悪夢、思い詰め、夜も眠れない心配事<br>★頭の中で悪い妄想が膨みすぎている暗示。現実そこまで悪くないので、まずは深呼吸して。🐰",
         "ソード10": "【キーワード】どん底からの再生、終わり、リセット、夜明け前<br>★これ以上悪くならないどん底の状態。あとは上に向かって跳ね上がるだけの夜明け前です。",
         "ソードペイジ": "【キーワード】リサーチ、警戒、情報収集、慎重、鋭い視点<br>★アンテナを高く張って、情報をしっかり集める時期。ちょっとした変化も見逃さないで。",
         "ソードナイト": "【キーワード】急進、理性的、スピード、問題解決、論理的突破<br>★シャキッと頭をフル回転させて、迷わずシャープに課題をクリアしていくスピードスター。",
@@ -486,7 +525,7 @@
         "ソードキング": "【キーワード】厳格なルール、支配力、高い知性、合理的決断<br>★圧倒的な知性と権威で、物事を白黒はっきりさせるプロフェッショナル。頼れる決断。",
 
         /* ペンタクル */
-        "ペンタクルA": "【キーワード】現実的な豊かさ、チャンス、臨時収入、確かな第一歩<br>★新しいビジネスや、目見える形としてのギフト・安定のチャンスが舞い込みます。🍓",
+        "ペンタクルA": "【キーワード】現実的な豊かさ、チャンス、臨時収入、確かな第一歩<br>★新しいビジネスや、目に見える形としてのギフト・安定のチャンスが舞い込みます。🍓",
         "ペンタクル2": "【キーワード】柔軟性、やりくり、要領が良い、変化を楽しむ<br>★二つのことを器用にジャグリングするように楽しむ時期。変化にしなやかに対応して。",
         "ペンタクル3": "【キーワード】技術の向上、チームワーク、協力、ステップアップ<br>★仲間と専門知識を出し合って、素晴らしいものをコツコツ作り上げていく充実したプロセス。",
         "ペンタクル4": "【キーワード】維持、執着、ケチ、安定へのこだわり、現状維持<br>★持っているものをがっちり守る安心感。でも、抱え込みすぎて変化を恐れないように注意。",
@@ -502,12 +541,12 @@
         "ペンタクルキング": "【キーワード】大富豪、成功者、安定の極み、現実的な成果、守る力<br>★これまでの努力が最大の富と実績になり、どっしりと椅子に腰掛けて全てをコントロールする完成形。"
     };
 
-    // 識別のため、デフォルトログに一意のid (タイムスタンプ) を初期付与します
+    // 新しいジャンル名に合わせてデフォルトログを調整
     const defaultLogs = [
         { 
             id: 1718460000000,
             date: "2026-06-15", 
-            genre: "仕事", 
+            genre: "仕事・適職", 
             spread: "ワンオラクル", 
             detail: "新プロジェクトのリーダーを任されたがプレッシャーがすごい。頑張れるか？", 
             cardNames: ["カードからのメッセージ ： ワンド 10 (正位置)"],
@@ -517,7 +556,7 @@
         { 
             id: 1718460100000,
             date: "2026-06-15", 
-            genre: "恋愛", 
+            genre: "相手の気持ち", 
             spread: "ワンオラクル", 
             detail: "職場の気になる後輩（男性）と仕事以外のプライベートな関係へ一歩踏み出したい。", 
             cardNames: ["カードからのメッセージ ： 2. 女教皇 (正位置)"],
@@ -527,7 +566,7 @@
         { 
             id: 1718460200000,
             date: "2026-06-15", 
-            genre: "恋愛", 
+            genre: "復縁・複雑愛", 
             spread: "ワンオラクル", 
             detail: "彼とのデートがいつもチェーン店や家ばかりでマンネリ。大切にされているか不安。", 
             cardNames: ["カードからのメッセージ ： 5. 法王 (正位置)"],
@@ -537,7 +576,7 @@
         { 
             id: 1718460300000,
             date: "2026-06-15", 
-            genre: "人生", 
+            genre: "今日の運勢・日常", 
             spread: "ワンオラクル", 
             detail: "今日のアドバイス（日課のワンオラクル練習）", 
             cardNames: ["カードからのメッセージ ： ソード 2 (正位置)"],
@@ -552,7 +591,7 @@
         "ワンオラクル": ["カードからのメッセージ"],
         "シンプルクロス": ["現状", "アドバイス"],
         "スリーカード": ["過去", "現在", "未来"],
-        "ダイヤモンドクロス": ["本人の気持ち", "相手の気持ち", "2人の現状", "2人の未来"],
+        "ダイヤモンドクロス": ["本本人の気持ち", "相手の気持ち", "2人の現状", "2人の未来"],
         "二者択一": ["現状", "Aの近い未来", "Aの結果", "Bの近い未来", "Bの結果"],
         "ヘキサグラム": ["過去", "現在", "未来", "アドバイス", "本心", "環境や相手", "結論"],
         "ケルト十字": ["現状", "今の問題", "過去", "未来", "潜在意識や根底にあるもの", "顕在意識や自覚するもの", "本人の状況", "環境", "願望や恐れ", "結論"]
@@ -577,7 +616,7 @@
         });
     }
 
-    function updateCardInputs() {
+    function updateCardInputs(callback) {
         const spread = document.getElementById('spread').value;
         const positions = spreadPositions[spread] || ["カード"];
         const wrapper = document.getElementById('cardFieldsWrapper');
@@ -598,15 +637,16 @@
             });
             
             selectHtml += `</select>`;
-            // フォーム入力直下に過去の解釈を表示するための枠を用意
             selectHtml += `<div id="formPastReadings_${index}" class="past-readings-box" style="display:none;"></div>`;
             
             div.innerHTML = selectHtml;
             wrapper.appendChild(div);
         });
+
+        // 編集時など、カード入力欄を生成した後に値を流し込むためのコールバック
+        if(callback) callback();
     }
 
-    // フォーム内でカードが選ばれた時、そのカードの過去の解釈をすぐ下に表示する関数
     function checkPastReadingsForForm(selectElement, index) {
         const targetDiv = document.getElementById(`formPastReadings_${index}`);
         if (!selectElement.value) {
@@ -614,12 +654,10 @@
             return;
         }
 
-        // 選択されたオプションから、カードのベース名（例: "女教皇"）を取得
         const selectedOption = selectElement.options[selectElement.selectedIndex];
         const baseKey = selectedOption.getAttribute('data-basekey');
-        const fullCardName = selectElement.value; // 例: "2. 女教皇 (正位置)"
+        const fullCardName = selectElement.value;
 
-        // 過去のログから、このカードが含まれるログを抽出
         const matchedLogs = myLogs.filter(log => {
             return log.cardNames.some(name => name.includes(fullCardName));
         });
@@ -627,7 +665,6 @@
         if (matchedLogs.length > 0) {
             targetDiv.style.display = "block";
             let html = `<div class="past-readings-title">🐰 過去にこのカードが出た時のメモ（最新3件）：</div><ul class="past-readings-list">`;
-            // 最新の3件を表示
             const recents = [...matchedLogs].sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 3);
             recents.forEach(log => {
                 html += `<li><strong>${log.date} (${log.genre})</strong>: ${log.meaning}</li>`;
@@ -640,7 +677,6 @@
         }
     }
 
-    // 📖 キーワード辞典側でカードが選ばれた際の表示処理
     function showCardInfo() {
         const selected = document.getElementById('dicSelect').value;
         const resultDiv = document.getElementById('dicResult');
@@ -650,10 +686,8 @@
             return;
         }
 
-        // 基本のキーワード辞典データを取得
         let outputHtml = cardDictionary[selected] || "解説データの準備中です。";
 
-        // 過去ログから、そのカード名（例: "女教皇"）が含まれるものをすべて抽出
         const matchedLogs = myLogs.filter(log => {
             return log.cardNames.some(name => name.includes(selected));
         });
@@ -664,7 +698,6 @@
             outputHtml += `<div style="font-weight:bold; color:#ff758f; margin-bottom:5px;">🔮 あなたの過去のリーディング（計 ${matchedLogs.length} 回出現）：</div>`;
             outputHtml += `<ul style="margin:0; padding-left:18px; font-size:13px; color:#6d5559;">`;
             
-            // 新しい日付順に並び替えて一覧表示
             const sortedMatched = [...matchedLogs].sort((a,b) => new Date(b.date) - new Date(a.date));
             sortedMatched.forEach(log => {
                 const posName = log.cardNames.find(name => name.includes(selected)) || "";
@@ -709,6 +742,7 @@
                         <div>
                             <span class="badge" style="background:#fff0f2; color:#ff758f;">${log.spread}</span>
                             <span class="badge">🍓 ${log.genre}</span>
+                            <button class="edit-btn" onclick="startEditing(${log.id})">📝 編集</button>
                         </div>
                     </div>
                     <div class="log-grid">
@@ -730,12 +764,68 @@
         }
     }
 
-    // 個別削除を実行する関数
+    // 📝 編集モードを開始する関数
+    function startEditing(id) {
+        const log = myLogs.find(l => l.id === id);
+        if (!log) return;
+
+        // フォームを編集モードの見た目にする
+        document.getElementById('formContainer').classList.add('editing-mode');
+        document.getElementById('formTitle').textContent = "📝 リーディング記録を修正中...";
+        document.getElementById('submitBtn').textContent = "この内容でノートを更新する ✨";
+        document.getElementById('cancelEditBtn').style.display = "block";
+
+        // 値をセット
+        document.getElementById('editingId').value = id;
+        document.getElementById('date').value = log.date;
+        document.getElementById('genre').value = log.genre;
+        document.getElementById('spread').value = log.spread;
+        document.getElementById('detail').value = log.detail;
+        document.getElementById('meaning').value = log.meaning;
+        document.getElementById('advice').value = log.advice;
+
+        // スプレッドに対応したセレクトボックスを生成してからカードの値を流し込む
+        updateCardInputs(function() {
+            const selects = document.querySelectorAll('.card-name-input');
+            log.cardNames.forEach((nameStr, i) => {
+                if (selects[i]) {
+                    // "現状 ： 2. 女教皇 (正位置)" から "2. 女教皇 (正位置)" だけを抽出
+                    const cardValue = nameStr.split(' ： ')[1];
+                    selects[i].value = cardValue;
+                    // 過去ログポップアップも更新
+                    checkPastReadingsForForm(selects[i], i);
+                }
+            });
+        });
+
+        // 画面を一番上（フォームの位置）へスムーズにスクロール
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // 🐰 編集キャンセル処理
+    function cancelEditing() {
+        document.getElementById('formContainer').classList.remove('editing-mode');
+        document.getElementById('formTitle').textContent = "✍️ 新しいリーディングを記録";
+        document.getElementById('submitBtn').textContent = "この内容をノートに保存する 🍓";
+        document.getElementById('cancelEditBtn').style.display = "none";
+        
+        document.getElementById('editingId').value = "";
+        document.getElementById('date').valueAsDate = new Date();
+        document.getElementById('detail').value = "";
+        document.getElementById('meaning').value = "";
+        document.getElementById('advice').value = "";
+        updateCardInputs();
+    }
+
     function deleteLog(id) {
         if (!id) return;
         
         const confirmDelete = confirm("この占いの記録をノートから削除しても大丈夫？🐰");
         if (confirmDelete) {
+            // もし編集中のデータを削除しようとしたら編集モードを解除
+            if(document.getElementById('editingId').value == id) {
+                cancelEditing();
+            }
             myLogs = myLogs.filter(log => log.id !== id);
             localStorage.setItem('tarot_logs_rabbit_positions_v1', JSON.stringify(myLogs));
             displayLogs();
@@ -743,32 +833,23 @@
         }
     }
 
-    // 📤 データをファイル（JSON）としてエクスポート（ダウンロード）する関数
     function exportData() {
         if (myLogs.length === 0) {
             alert("ノートに記録がありません。まずは占いを記録してみてね🐰");
             return;
         }
-        
-        // 保存する日付をファイル名に入れる (例: tarot_backup_2026-06-17.json)
         const todayStr = new Date().toISOString().split('T')[0];
         const filename = `tarot_backup_${todayStr}.json`;
-        
-        // 文字列にしてデータ化
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(myLogs, null, 2));
-        
-        // 擬似的なダウンロードリンクを作って自動クリック
         const downloadAnchor = document.createElement('a');
         downloadAnchor.setAttribute("href", dataStr);
         downloadAnchor.setAttribute("download", filename);
         document.body.appendChild(downloadAnchor);
         downloadAnchor.click();
         downloadAnchor.remove();
-        
         alert("うさぎのノートをファイルにバックアップしました！🍓 大事な場所に保管してね。");
     }
 
-    // 📥 バックアップファイル（JSON）からデータを読み込んで上書き・復元する関数
     function importData(input) {
         const file = input.files[0];
         if (!file) return;
@@ -777,19 +858,14 @@
         reader.onload = function(e) {
             try {
                 const importedLogs = JSON.parse(e.target.result);
-                
-                // 簡単なデータ構造のチェック
                 if (Array.isArray(importedLogs)) {
                     const confirmImport = confirm("ファイルを読み込みます。現在のノートの内容が上書きされますがよろしいですか？🐰");
                     if (confirmImport) {
                         myLogs = importedLogs;
                         localStorage.setItem('tarot_logs_rabbit_positions_v1', JSON.stringify(myLogs));
-                        
-                        // 画面全体をリフレッシュ
+                        cancelEditing();
                         displayLogs();
-                        updateCardInputs();
                         if(document.getElementById('dicSelect').value) showCardInfo();
-                        
                         alert("ノートの復元・お引っ越しが完了しました！🔮🐰");
                     }
                 } else {
@@ -798,7 +874,6 @@
             } catch (err) {
                 alert("ファイルの読み込み中にエラーが発生しました。");
             }
-            // 連続で同じファイルを読み込めるように選択をリセット
             input.value = "";
         };
         reader.readAsText(file);
@@ -816,28 +891,49 @@
             }
         });
         
-        const newLog = {
-            id: Date.now(), 
-            date: document.getElementById('date').value,
-            genre: document.getElementById('genre').value,
-            spread: document.getElementById('spread').value,
-            detail: document.getElementById('detail').value,
-            cardNames: cardNamesData,
-            meaning: document.getElementById('meaning').value,
-            advice: document.getElementById('advice').value
-        };
+        const editingId = document.getElementById('editingId').value;
 
-        myLogs.push(newLog);
+        if (editingId) {
+            // 【修正・上書き保存モード】
+            const index = myLogs.findIndex(log => log.id == editingId);
+            if (index !== -1) {
+                myLogs[index].date = document.getElementById('date').value;
+                myLogs[index].genre = document.getElementById('genre').value;
+                myLogs[index].spread = document.getElementById('spread').value;
+                myLogs[index].detail = document.getElementById('detail').value;
+                myLogs[index].cardNames = cardNamesData;
+                myLogs[index].meaning = document.getElementById('meaning').value;
+                myLogs[index].advice = document.getElementById('advice').value;
+                
+                alert("占い記録を修正・更新したよ！✨🐰");
+            }
+            // 編集モードを終了
+            cancelEditing();
+        } else {
+            // 【新規記録モード】
+            const newLog = {
+                id: Date.now(), 
+                date: document.getElementById('date').value,
+                genre: document.getElementById('genre').value,
+                spread: document.getElementById('spread').value,
+                detail: document.getElementById('detail').value,
+                cardNames: cardNamesData,
+                meaning: document.getElementById('meaning').value,
+                advice: document.getElementById('advice').value
+            };
+            myLogs.push(newLog);
+            alert("占い記録をノートに保存したよ！🐰🍓");
+            
+            // フォームの部分クリア
+            document.getElementById('detail').value = "";
+            document.getElementById('meaning').value = "";
+            document.getElementById('advice').value = "";
+            updateCardInputs();
+        }
+
+        // データの永続化と画面更新
         localStorage.setItem('tarot_logs_rabbit_positions_v1', JSON.stringify(myLogs));
-
         displayLogs();
-        
-        document.getElementById('detail').value = "";
-        document.getElementById('meaning').value = "";
-        document.getElementById('advice').value = "";
-        updateCardInputs();
-        
-        alert("占い記録をノートに保存したよ！🐰🍓");
     });
 </script>
 </body>
