@@ -131,7 +131,7 @@
             position: relative;
         }
         
-        /* ❌ 削除ボタンの可愛いスタイリング */
+        /* ❌ 削除ボタン */
         .delete-btn {
             background: none;
             border: none;
@@ -154,7 +154,7 @@
             transform: scale(1.15);
         }
 
-        /* 📝 編集ボタンのスタイリング */
+        /* 📝 編集ボタン */
         .edit-btn {
             background: #fff0f2;
             color: #ff758f;
@@ -295,7 +295,6 @@
             <div class="card-box" id="formContainer">
                 <h2 id="formTitle">✍️ 新しいリーディングを記録</h2>
                 <form id="logForm">
-                    <!-- 現在編集中のIDを隠し持つ用 -->
                     <input type="hidden" id="editingId" value="">
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
@@ -406,7 +405,7 @@
 <script>
     const baseCardList = [
         /* 大アルカナ */
-        { val: "愚者", text: "0. 愚者", type: "major" }, { val: "魔術師", text: "1.魔術師", type: "major" }, { val: "女教皇", text: "2. 女教皇", type: "major" },
+        { val: "愚者", text: "0. 愚者", type: "major" }, { val: "魔術師", text: "1. 魔術師", type: "major" }, { val: "女教皇", text: "2. 女教皇", type: "major" },
         { val: "女帝", text: "3. 女帝", type: "major" }, { val: "皇帝", text: "4. 皇帝", type: "major" }, { val: "法王", text: "5. 法王", type: "major" },
         { val: "恋人", text: "6. 恋人", type: "major" }, { val: "戦車", text: "7. 戦車", type: "major" }, { val: "正義", text: "8. 正義", type: "major" },
         { val: "隠者", text: "9. 隠者", type: "major" }, { val: "運命の輪", text: "10. 運命の輪", type: "major" }, { val: "力", text: "11. 力", type: "major" },
@@ -452,7 +451,6 @@
     }
 
     const cardDictionary = {
-        /* 大アルカナ */
         "愚者": "【キーワード】自由、冒険、純粋、始まり、可能性<br>★固定観念にとらわれず、新しい一歩を気楽に踏み出すタイミングです🐰",
         "魔術師": "【キーワード】スタート、才能、創造、準備万端、自信<br>★必要な道具や能力はすべて揃っています。自らの意思で行動を起こす時。",
         "女教皇": "【キーワード】直感、秘密、完璧主義、恥ずかしさ、殻にこもる<br>★完璧を求めすぎるマイルールや恥ずかしさがブレーキになっている状況を示します。",
@@ -467,7 +465,7 @@
         "力": "【キーワード】精神力、忍耐、受け入れる強さ、コントロール、愛の和解<br>★腕力ではなく、優しさと粘り強い理性によって、困難や荒ぶる感情を飼い慣らす。",
         "吊るされた男": "【キーワード】試練、方向転換、自己犠牲、視点を変える、充電期<br>★身動きが取れない時は、あえて逆の視点から物事を見るチャンス。焦りは禁物。",
         "死神": "【キーワード】強制終了、リセット、未練を断つ、再生、新しい幕開け<br>★1つの物事がガラリと終わりを迎えます。それは次のステージへ進むための必要なリセット。",
-        "節制": "【キーワード】調和、循環、絶妙なコントロール、穏やかさ、歩み寄り<br>★異なる要素をうまく混ぜ合わせて最適なバランスを生み出す。穏やかなコミュニケーション。",
+        "節制": "【キーワード】調和、循環、逆境での対応、穏やかさ、歩み寄り<br>★異なる要素をうまく混ぜ合わせて最適なバランスを生み出す。穏やかなコミュニケーション。",
         "悪魔": "【キーワード】誘惑、依存、執着、ぬるま湯、心の弱さ<br>★「ダメだと分かっているけれど離れられない」という強い執着や、甘い誘惑への警告。",
         "塔": "【キーワード】突然の崩壊、衝撃、プライドの打破、価値観の激変<br>★想定外の出来事による変化。しかし、崩れた土台から全く新しい未来を築き直せます。",
         "星": "【キーワード】希望、理想、憧れ、ひらめき、心の癒やし<br>★暗闇の中に輝く希望の光。目標を高く持ち、純粋な願いを持ち続けることで道が開けます。🍓",
@@ -475,8 +473,6 @@
         "太陽": "【キーワード】成功、活力、祝福、無邪気、エネルギー全開<br>★圧倒的なポジティブさと成功！子供のような純粋な心で、今この瞬間を全力で楽しむ。🐰",
         "審判": "【キーワード】復活、覚醒、吉報、過去の報われ、再挑戦<br>★諦めていたことへの再チャンスや、これまでの努力が最高の形で報われる復活の合図。",
         "世界": "【キーワード】完成、完璧、ゴール、満足、ハッピーエンド<br>★最高潮の達成と一つのサイクルの完成。これ以上ない満足感と調和に満たされます。🍓",
-
-        /* ワンド */
         "ワンドA": "【キーワード】情熱の始まり、ひらめき、やる気、出発<br>★エネルギーが湧き上がっています！新しい挑戦へ飛び出す絶好のチャンスです。",
         "ワンド2": "【キーワード】野望、次のステップ、計画、未来への展望<br>★一つの成功を手にして、さらに広い世界へ注目して計画を練る段階です。",
         "ワンド3": "【キーワード】進展、開拓、協力関係、視野を広げる<br>★船出の準備は完了。自分の可能性を信じて、より遠い未来を見据えて進みましょう。",
@@ -491,8 +487,6 @@
         "ワンドナイト": "【キーワード】突進、情熱、行動力、勇猛果敢、旅立ち<br>★迷わず一気に突っ走る高いエネルギー！熱い猛ダッシュの時です。",
         "ワンドクイーン": "【キーワード】明るさ、魅力的、元気、親切、ポジティブオーラ<br>★ひまわりのように周囲を明るく照らす存在。自信を持って、温かい笑顔で人を包み込んで。🍓",
         "ワンドキング": "【キーワード】決断力、カリスマ、頼れる存在、堂々とした態度<br>★強い信念を持ってチームを引っ張るリーダー。現実を動かす圧倒的なパワーが宿ります。",
-
-        /* カップ */
         "カップA": "【キーワード】愛の始まり、溢れる感情、幸福、豊かな感受性<br>★心の器から幸せな気持ちや愛がジュワッと溢れ出します。新しい人間関係や潤いのスタート。🍓",
         "カップ2": "【キーワード】相思相愛、絆、調和、対話、心の通じ合い<br>★目の前の相手と気持ちがぴったり通じ合う、とても心地よくて嬉しくなるような関係性。🐰",
         "カップ3": "【キーワード】お祝い、仲間、歓喜、グループ、三位一体<br>★仲の良いお友達と楽しくおしゃべりしてリフレッシュ。喜びをみんなで分かち合う時。🍓",
@@ -507,8 +501,6 @@
         "カップナイト": "【キーワード】アプローチ、白馬の王子、ロマンチック、プロポーズ<br>★あなたに優しさや素敵な提案を持ってきてくれる人が現れる暗示。誘いには乗ってみて。🍓",
         "カップクイーン": "【キーワード】深い慈愛、共感力、優しさ、包容力、芸術的感性<br>★相手の気持ちを我がことのように優しく受け止められる、とっても心の広い癒やしの存在。",
         "カップキング": "【キーワード】感情のコントロール、寛大、心の安定、包容力<br>★どんなに波風が立っても、穏やかな広い心で受け止める包容力。頼れるカウンセラー。",
-
-        /* ソード */
         "ソードA": "【キーワード】揺るぎない決意、勝利、理性のスタート、ブレない軸<br>★覚悟を決めて、自分の思考や言葉で人生を切り開いていく、強い意志の始まりです。",
         "ソード2": "【キーワード】バランス、保留、葛藤、均衡、内なる声を聞く<br>★あわてて白黒つけず、あえて今は保留にして心のバランスを保つことが大切な時です。",
         "ソード3": "【キーワード】心の傷、悲しみ、ショック、受け入れる心の痛み<br>★チクッと胸が痛む出来事。しかし、それは現実を直視し、心をクリアに浄化するためのプロセス。",
@@ -523,9 +515,7 @@
         "ソードナイト": "【キーワード】急進、理性的、スピード、問題解決、論理的突破<br>★シャキッと頭をフル回転させて、迷わずシャープに課題をクリアしていくスピードスター。",
         "ソードクイーン": "【キーワード】的確な判断、自立、誠実、冷静沈着、無駄のない言葉<br>★感情に流されず、事実をもとに「何が正しいか」をズバッと見極められるスマートな女性。🍓",
         "ソードキング": "【キーワード】厳格なルール、支配力、高い知性、合理的決断<br>★圧倒的な知性と権威で、物事を白黒はっきりさせるプロフェッショナル。頼れる決断。",
-
-        /* ペンタクル */
-        "ペンタクルA": "【キーワード】現実的な豊かさ、チャンス、臨時収入、確かな第一歩<br>★新しいビジネスや、目に見える形としてのギフト・安定のチャンスが舞い込みます。🍓",
+        "ペンタクルA": "【キーワード】現実的な豊かさ、チャンス、臨時収入、確かな第一歩<br>★新しいビジネスや、目見える形としてのギフト・安定のチャンスが舞い込みます。🍓",
         "ペンタクル2": "【キーワード】柔軟性、やりくり、要領が良い、変化を楽しむ<br>★二つのことを器用にジャグリングするように楽しむ時期。変化にしなやかに対応して。",
         "ペンタクル3": "【キーワード】技術の向上、チームワーク、協力、ステップアップ<br>★仲間と専門知識を出し合って、素晴らしいものをコツコツ作り上げていく充実したプロセス。",
         "ペンタクル4": "【キーワード】維持、執着、ケチ、安定へのこだわり、現状維持<br>★持っているものをがっちり守る安心感。でも、抱え込みすぎて変化を恐れないように注意。",
@@ -541,57 +531,19 @@
         "ペンタクルキング": "【キーワード】大富豪、成功者、安定の極み、現実的な成果、守る力<br>★これまでの努力が最大の富と実績になり、どっしりと椅子に腰掛けて全てをコントロールする完成形。"
     };
 
-    // 新しいジャンル名に合わせてデフォルトログを調整
-    const defaultLogs = [
-        { 
-            id: 1718460000000,
-            date: "2026-06-15", 
-            genre: "仕事・適職", 
-            spread: "ワンオラクル", 
-            detail: "新プロジェクトのリーダーを任されたがプレッシャーがすごい。頑張れるか？", 
-            cardNames: ["カードからのメッセージ ： ワンド 10 (正位置)"],
-            meaning: "目標の達成や一つの完成形を迎えるのはもうすぐ。タスクを抱えすぎている状態。", 
-            advice: "プレッシャーを抱えながらも頑張りたいという気持ちが表れています。ゴールはもうすぐなので、一人で抱えすぎず周りを頼って。頑張れば必ず達成できます！" 
-        },
-        { 
-            id: 1718460100000,
-            date: "2026-06-15", 
-            genre: "相手の気持ち", 
-            spread: "ワンオラクル", 
-            detail: "職場の気になる後輩（男性）と仕事以外のプライベートな関係へ一歩踏み出したい。", 
-            cardNames: ["カードからのメッセージ ： 2. 女教皇 (正位置)"],
-            meaning: "「完璧な先輩」というマイルールや恥ずかしさが殻（ベール）を作ってブレーキになっている状態。", 
-            advice: "先輩としての顔と女性としての顔の切り替えに、恥ずかしさもありますよね。関係性はこれから築いていくもの。自分の殻を破って、プライベートな自分らしさを出した会話から始めてみては？" 
-        },
-        { 
-            id: 1718460200000,
-            date: "2026-06-15", 
-            genre: "復縁・複雑愛", 
-            spread: "ワンオラクル", 
-            detail: "彼とのデートがいつもチェーン店や家ばかりでマンネリ。大切にされているか不安。", 
-            cardNames: ["カードからのメッセージ ： 5. 法王 (正位置)"],
-            meaning: "彼は大きな変化より安定を好むタイプ。真面目で、将来のために堅実にお金を貯めている可能性。", 
-            advice: "彼は安定した日常に安心する真面目なタイプ。大切にしていない訳ではなく、むしろ将来を見据えて堅実に考えているかも。彼の気持ちも尊重しつつ、「好きだからこそ色んな経験を一緒にしたいな」と新しいデートを提案してみては？" 
-        },
-        { 
-            id: 1718460300000,
-            date: "2026-06-15", 
-            genre: "今日の運勢・日常", 
-            spread: "ワンオラクル", 
-            detail: "今日のアドバイス（日課のワンオラクル練習）", 
-            cardNames: ["カードからのメッセージ ： ソード 2 (正位置)"],
-            meaning: "2本の剣を交差させてバランスを取る。あわてて白黒つけず、保留にすることの重要性。", 
-            advice: "思考することは大切。選ぶよりバランスを意識する、内なる声を聞く。" 
-        }
-    ];
+    // 🚨 6月15日の初期サンプルデータを完全に削除し、最初は「空っぽ」からスタートするようにしました
+    const defaultLogs = [];
 
     let myLogs = JSON.parse(localStorage.getItem('tarot_logs_rabbit_positions_v1')) || defaultLogs;
+
+    // もし古いキャッシュデータが残っている場合は、この時点で強制的に6月15日の古いデータを消し去ります
+    myLogs = myLogs.filter(log => log.date !== "2026-06-15");
 
     const spreadPositions = {
         "ワンオラクル": ["カードからのメッセージ"],
         "シンプルクロス": ["現状", "アドバイス"],
         "スリーカード": ["過去", "現在", "未来"],
-        "ダイヤモンドクロス": ["本本人の気持ち", "相手の気持ち", "2人の現状", "2人の未来"],
+        "ダイヤモンドクロス": ["本人の気持ち", "相手の気持ち", "2人の現状", "2人の未来"],
         "二者択一": ["現状", "Aの近い未来", "Aの結果", "Bの近い未来", "Bの結果"],
         "ヘキサグラム": ["過去", "現在", "未来", "アドバイス", "本心", "環境や相手", "結論"],
         "ケルト十字": ["現状", "今の問題", "過去", "未来", "潜在意識や根底にあるもの", "顕在意識や自覚するもの", "本人の状況", "環境", "願望や恐れ", "結論"]
@@ -643,7 +595,6 @@
             wrapper.appendChild(div);
         });
 
-        // 編集時など、カード入力欄を生成した後に値を流し込むためのコールバック
         if(callback) callback();
     }
 
@@ -665,7 +616,8 @@
         if (matchedLogs.length > 0) {
             targetDiv.style.display = "block";
             let html = `<div class="past-readings-title">🐰 過去にこのカードが出た時のメモ（最新3件）：</div><ul class="past-readings-list">`;
-            const recents = [...matchedLogs].sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 3);
+            // 最新のものが上に来るようにID(タイムスタンプ)でソート
+            const recents = [...matchedLogs].sort((a,b) => b.id - a.id).slice(0, 3);
             recents.forEach(log => {
                 html += `<li><strong>${log.date} (${log.genre})</strong>: ${log.meaning}</li>`;
             });
@@ -698,7 +650,8 @@
             outputHtml += `<div style="font-weight:bold; color:#ff758f; margin-bottom:5px;">🔮 あなたの過去のリーディング（計 ${matchedLogs.length} 回出現）：</div>`;
             outputHtml += `<ul style="margin:0; padding-left:18px; font-size:13px; color:#6d5559;">`;
             
-            const sortedMatched = [...matchedLogs].sort((a,b) => new Date(b.date) - new Date(a.date));
+            // 登録が新しい順(IDの降順)に並び替え
+            const sortedMatched = [...matchedLogs].sort((a,b) => b.id - a.id);
             sortedMatched.forEach(log => {
                 const posName = log.cardNames.find(name => name.includes(selected)) || "";
                 outputHtml += `<li style="margin-bottom:6px;"><strong>${log.date} 【${log.genre}】</strong> (${log.spread})<br>`;
@@ -719,7 +672,8 @@
         const container = document.getElementById('logsContainer');
         container.innerHTML = "";
 
-        const sortedLogs = [...myLogs].sort((a, b) => new Date(b.date) - new Date(a.date));
+        // ✨【修正ポイント】入力された順番に並べ、新しいものが一番上（IDの大きい順）に並ぶようにソート
+        const sortedLogs = [...myLogs].sort((a, b) => b.id - a.id);
 
         sortedLogs.forEach(log => {
             const cardsString = log.cardNames.join(" ");
@@ -764,18 +718,15 @@
         }
     }
 
-    // 📝 編集モードを開始する関数
     function startEditing(id) {
-        const log = myLogs.find(l => l.id === id);
+        const log = myLogs.find(l => l.id == id);
         if (!log) return;
 
-        // フォームを編集モードの見た目にする
         document.getElementById('formContainer').classList.add('editing-mode');
         document.getElementById('formTitle').textContent = "📝 リーディング記録を修正中...";
         document.getElementById('submitBtn').textContent = "この内容でノートを更新する ✨";
         document.getElementById('cancelEditBtn').style.display = "block";
 
-        // 値をセット
         document.getElementById('editingId').value = id;
         document.getElementById('date').value = log.date;
         document.getElementById('genre').value = log.genre;
@@ -784,25 +735,20 @@
         document.getElementById('meaning').value = log.meaning;
         document.getElementById('advice').value = log.advice;
 
-        // スプレッドに対応したセレクトボックスを生成してからカードの値を流し込む
         updateCardInputs(function() {
             const selects = document.querySelectorAll('.card-name-input');
             log.cardNames.forEach((nameStr, i) => {
                 if (selects[i]) {
-                    // "現状 ： 2. 女教皇 (正位置)" から "2. 女教皇 (正位置)" だけを抽出
                     const cardValue = nameStr.split(' ： ')[1];
                     selects[i].value = cardValue;
-                    // 過去ログポップアップも更新
                     checkPastReadingsForForm(selects[i], i);
                 }
             });
         });
 
-        // 画面を一番上（フォームの位置）へスムーズにスクロール
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // 🐰 編集キャンセル処理
     function cancelEditing() {
         document.getElementById('formContainer').classList.remove('editing-mode');
         document.getElementById('formTitle').textContent = "✍️ 新しいリーディングを記録";
@@ -822,11 +768,10 @@
         
         const confirmDelete = confirm("この占いの記録をノートから削除しても大丈夫？🐰");
         if (confirmDelete) {
-            // もし編集中のデータを削除しようとしたら編集モードを解除
             if(document.getElementById('editingId').value == id) {
                 cancelEditing();
             }
-            myLogs = myLogs.filter(log => log.id !== id);
+            myLogs = myLogs.filter(log => log.id != id);
             localStorage.setItem('tarot_logs_rabbit_positions_v1', JSON.stringify(myLogs));
             displayLogs();
             showCardInfo();
@@ -894,7 +839,6 @@
         const editingId = document.getElementById('editingId').value;
 
         if (editingId) {
-            // 【修正・上書き保存モード】
             const index = myLogs.findIndex(log => log.id == editingId);
             if (index !== -1) {
                 myLogs[index].date = document.getElementById('date').value;
@@ -907,12 +851,10 @@
                 
                 alert("占い記録を修正・更新したよ！✨🐰");
             }
-            // 編集モードを終了
             cancelEditing();
         } else {
-            // 【新規記録モード】
             const newLog = {
-                id: Date.now(), 
+                id: Date.now(), // 登録した瞬間の時間をIDに（これで並び順を管理します）
                 date: document.getElementById('date').value,
                 genre: document.getElementById('genre').value,
                 spread: document.getElementById('spread').value,
@@ -924,14 +866,12 @@
             myLogs.push(newLog);
             alert("占い記録をノートに保存したよ！🐰🍓");
             
-            // フォームの部分クリア
             document.getElementById('detail').value = "";
             document.getElementById('meaning').value = "";
             document.getElementById('advice').value = "";
             updateCardInputs();
         }
 
-        // データの永続化と画面更新
         localStorage.setItem('tarot_logs_rabbit_positions_v1', JSON.stringify(myLogs));
         displayLogs();
     });
